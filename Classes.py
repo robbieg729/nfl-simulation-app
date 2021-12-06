@@ -12,12 +12,12 @@ class Team:
         :param year: the year for which the data should be collected from. If not specified, default to current and previous year.
         """
         self.name = name
-        self.team_data_spreadsheet = pd.ExcelFile("Teams/" + self.name + "/" + year + "Team Data.xlsx") # Loading main data sheet
-        self.target_depth_spreadsheet = pd.ExcelFile("Teams/" + self.name + "/" + year + "Target Depth Data.xlsx") # Loading target depth data sheet
-        self.roster_spreadsheet = pd.ExcelFile("Teams/" + self.name + "/Players Stats.xlsx") # Loading roster sheet
-        self.players_data_spreadsheet = pd.ExcelFile("Teams/" + self.name + "/Players Data.xlsx") # Loading players targets and rush attempts data sheet
-        self.players_yards_spreadsheet = pd.ExcelFile("Teams/" + self.name + "/Players Yards Data.xlsx") # Loading players rush and receiving yards gained sheet
-        self.qbs_target_depth_spreadsheet = pd.ExcelFile("Teams/" + self.name + "/QBs Target Depth Data.xlsx") # Loading target depth data sheet for individual QBs
+        self.team_data_spreadsheet = pd.ExcelFile("Base/Teams/" + self.name + "/" + year + "Team Data.xlsx") # Loading main data sheet
+        self.target_depth_spreadsheet = pd.ExcelFile("Base/Teams/" + self.name + "/" + year + "Target Depth Data.xlsx") # Loading target depth data sheet
+        self.roster_spreadsheet = pd.ExcelFile("Base/Teams/" + self.name + "/Players Stats.xlsx") # Loading roster sheet
+        self.players_data_spreadsheet = pd.ExcelFile("Base/Teams/" + self.name + "/Players Data.xlsx") # Loading players targets and rush attempts data sheet
+        self.players_yards_spreadsheet = pd.ExcelFile("Base/Teams/" + self.name + "/Players Yards Data.xlsx") # Loading players rush and receiving yards gained sheet
+        self.qbs_target_depth_spreadsheet = pd.ExcelFile("Base/Teams/" + self.name + "/QBs Target Depth Data.xlsx") # Loading target depth data sheet for individual QBs
         self.players_rush_yards_sheet = self.players_yards_spreadsheet.parse("Rushing") # Getting individual player rush yards gained lists
         self.players_rec_yards_sheet = self.players_yards_spreadsheet.parse("Receiving") # Getting individual player receiving yards gained lists       
         self.team_yards_sheet = self.team_data_spreadsheet.parse("YDS") # Getting team yards gained lists
@@ -267,7 +267,7 @@ class Simulation_Team(Team):
     '''
     def __init__(self, name, year="", records=["0-0-0", "0-0-0", "0-0-0"]):
         super().__init__(name, year=year) # Keep same initializations from parent class
-        self.dist_sheet = pd.ExcelFile("Teams/" + self.name + "/Distributions.xlsx").parse("YDS") # Sheet storing the statistical distributions for offensive and defensive rush yards and pass yards
+        self.dist_sheet = pd.ExcelFile("Base/Teams/" + self.name + "/Distributions.xlsx").parse("YDS") # Sheet storing the statistical distributions for offensive and defensive rush yards and pass yards
         # Offensive rush yards distribution, stored as [distribution_name, [parameters]]
         self.rush_yards_dist = [self.dist_sheet["R"][0][0:self.dist_sheet["R"][0].index("(")], [float(p) for p in self.dist_sheet["R"][0][self.dist_sheet["R"][0].index("(")+1:self.dist_sheet["R"][0].index(")")].split(", ")]]
         # Offensive pass yards distribution, stored as [distribution_name, [parameters]]

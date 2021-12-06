@@ -10,16 +10,16 @@ def create_win_probabilities_image(matchups_data, week, img_number):
     '''
     img = Image.new("RGB", (1080, 1080), color=(1, 51, 105)) # Create 1080 x 1080 image with background specified by RGB color (1, 51, 105) 
     d = ImageDraw.Draw(img) # Create an object to be able to draw to the image with
-    fnt = ImageFont.truetype("Fonts/Abel-regular.ttf", 90) # Set the font to be used for the next draw
+    fnt = ImageFont.truetype("Base/Fonts/Abel-regular.ttf", 90) # Set the font to be used for the next draw
     text = "WIN PROBABILITIES" # Next text to be displayed (this is the title)
     d.text((540 - (d.textlength(text, font=fnt) / 2), 0), text, font=fnt, fill=(255, 255, 255), stroke_width=1) # Add title to image
     text = "Week " + str(week) # Text showing week number
-    fnt = ImageFont.truetype("Fonts/Abel-regular.ttf", 40) # Change font size
+    fnt = ImageFont.truetype("Base/Fonts/Abel-regular.ttf", 40) # Change font size
     d.text((540 - (d.textlength(text, font=fnt) / 2), 126), text, font=fnt, fill=(255, 255, 255), stroke_width=1) # Add week text to image
     i = -1 # Acts as an index. Could say for i in range(...) but this way is more readable
     for matchup in matchups_data: # loop through matchups
         i += 1 # Increase index (set to 0 on first loop)
-        fnt = ImageFont.truetype("Fonts/Abel-regular.ttf", 60)
+        fnt = ImageFont.truetype("Base/Fonts/Abel-regular.ttf", 60)
         road_img_coords = (25, 200 + 100 * i) # Coordinates for road team logo
         road_prob_coords = (146.875, 210.5 + 100 * i) # Coordinates for road team win probability
         road_rectangle_coords = [327.5, 221 + 100 * i, 0, 271 + 100 * i] # Coordinates for continuous bar showing the win probability
@@ -30,9 +30,9 @@ def create_win_probabilities_image(matchups_data, week, img_number):
         base_rectangle_coords = [327.5, 221 + 100 * i, 752.5, 271 + 100 * i] # Underlying continuous bar coordinates. Road team bar is laid over this bar.
         tie_y_coord = 282.5 + 100 * i # Coordinates for text showing chance of a tie
         tie_rectangle_coords = [0, 221 + 100 * i, 0, 271 + 100 * i] # Coordinates for a thin white rectangle that will also be laid over the base, showing chances of a tie.
-        road_img = Image.open("Team Logos/" + matchup[0] + ".png").resize((90, 90)) # Get road team image and resize to 90 x 90
+        road_img = Image.open("Base/Base/Team Logos/" + matchup[0] + ".png").resize((90, 90)) # Get road team image and resize to 90 x 90
         img.paste(road_img, road_img_coords, road_img.convert("RGBA")) # paste road team image onto main image, while maintaining transparency
-        home_img = Image.open("Team Logos/" + matchup[2] + ".png").resize((90, 90))
+        home_img = Image.open("Base/Base/Team Logos/" + matchup[2] + ".png").resize((90, 90))
         img.paste(home_img, home_img_coords, home_img.convert("RGBA"))        
         if matchup[1] > matchup[3]: # road team has a higher chance of winning
             road_fill = (77, 255, 12) # road fill set to a green color
@@ -53,7 +53,7 @@ def create_win_probabilities_image(matchups_data, week, img_number):
         tie_rectangle_coords[2] = road_rectangle_coords[2] + 4
         d.rectangle(tie_rectangle_coords, fill=(255, 255, 255))
         tie_text = "TIE - " + str(matchup[4]) + "%"
-        fnt = ImageFont.truetype("Fonts/Abel-regular.ttf", 24)
+        fnt = ImageFont.truetype("Base/Fonts/Abel-regular.ttf", 24)
         d.text((540 - (d.textlength(tie_text, font=fnt) / 2), tie_y_coord), tie_text, font=fnt, fill=(255, 255, 255), stroke_width=1)
     img.save("Instagram Posts/Week " + str(week) + "/Win Probabilities " + str(img_number) + ".png") # save image
 
@@ -73,13 +73,13 @@ def create_fantasy_rankings_image(objects_list, object_team_names_list, team_col
     '''
     img = Image.new("RGB", (1080, 1080), color=(1, 51, 105)) # Create 1080 x 1080 image with background color (1, 51, 105) in RGB form
     d = ImageDraw.Draw(img) # Create object to draw to image
-    fnt = ImageFont.truetype("Fonts/Abel-regular.ttf", 90) # Set font type and size
+    fnt = ImageFont.truetype("Base/Fonts/Abel-regular.ttf", 90) # Set font type and size
     text = "TOP FANTASY " + position + "s " + "(" + scoring_format + ")" if scoring_format != "" else "TOP FANTASY " + position + "s" # Title
     d.text((540 - (d.textlength(text, font=fnt) / 2), 0), text, font=fnt, fill=(255, 255, 255), stroke_width=1) # Draw title to image
     text = "Week " + str(week) # Week text
-    fnt = ImageFont.truetype("Fonts/Abel-regular.ttf", 40) # Change font size
+    fnt = ImageFont.truetype("Base/Fonts/Abel-regular.ttf", 40) # Change font size
     d.text((540 - (d.textlength(text, font=fnt) / 2), 126), text, font=fnt, fill=(255, 255, 255), stroke_width=1) # Draw week text to image
-    fnt = ImageFont.truetype("Fonts/Abel-regular.ttf", 36) # Change font size
+    fnt = ImageFont.truetype("Base/Fonts/Abel-regular.ttf", 36) # Change font size
     current_num = starting_num # current rank for the next player
     for i in range(0, len(objects_list)): # Loop through players / teams
         rectangle_coords = [0, 221 + 50 * i, 540, 271 + 50 * i] if i < 16 else [540, 221 + 50 * (i - 16), 1080, 271 + 50 * (i - 16)] # Position of current player/team rectangle
@@ -90,7 +90,7 @@ def create_fantasy_rankings_image(objects_list, object_team_names_list, team_col
         d.rectangle(rectangle_coords, fill=team_colors[object_team_names_list[i]], outline=(255, 255, 255), width=3) # Draw player/team rectangle, with color of base team color
         d.text(numbers_coords, str(current_num) + ".", font=fnt, fill=(255, 255, 255), stroke_width=1) # Draw player/team rank
         # Get player/team team logo, and appropriately resize (some team logos look better of resized differently)
-        team_img = Image.open("Team Logos/" + object_team_names_list[i] + ".png").resize((40, 40)) if (object_team_names_list[i] != "Panthers" and object_team_names_list[i] != "Ravens" and object_team_names_list[i] != "Patriots" and object_team_names_list[i] != "Seahawks" and object_team_names_list[i] != "Broncos" and object_team_names_list[i] != "Football Team" and object_team_names_list[i] != "Jets" and object_team_names_list[i] != "49ers") else Image.open("Team Logos/" + object_team_names_list[i] + ".png").resize((48, 48))
+        team_img = Image.open("Base/Team Logos/" + object_team_names_list[i] + ".png").resize((40, 40)) if (object_team_names_list[i] != "Panthers" and object_team_names_list[i] != "Ravens" and object_team_names_list[i] != "Patriots" and object_team_names_list[i] != "Seahawks" and object_team_names_list[i] != "Broncos" and object_team_names_list[i] != "Football Team" and object_team_names_list[i] != "Jets" and object_team_names_list[i] != "49ers") else Image.open("Base/Team Logos/" + object_team_names_list[i] + ".png").resize((48, 48))
         img.paste(team_img, img_coords, team_img.convert("RGBA")) # Paste team logo to image, maintaining transparency
         name_text = objects_list[i].name
         if "." in name_text: # player name
@@ -151,13 +151,13 @@ def create_power_rankings_image(teams, team_colors, week):
     '''
     img = Image.new("RGB", (1080, 1080), color=(1, 51, 105)) # Create 1080 x 1080 image with background (1, 51, 105) in RGB form
     d = ImageDraw.Draw(img) # Create object to draw to image
-    fnt = ImageFont.truetype("Fonts/Abel-regular.ttf", 90) # Set font type and font size
+    fnt = ImageFont.truetype("Base/Fonts/Abel-regular.ttf", 90) # Set font type and font size
     text = "POWER RANKINGS" # Title
     d.text((540 - (d.textlength(text, font=fnt) / 2), 0), text, font=fnt, fill=(255, 255, 255), stroke_width=1) # Draw title
     text = "Week " + str(week) # Week text
-    fnt = ImageFont.truetype("Fonts/Abel-regular.ttf", 40) # Change font size
+    fnt = ImageFont.truetype("Base/Fonts/Abel-regular.ttf", 40) # Change font size
     d.text((540 - (d.textlength(text, font=fnt) / 2), 126), text, font=fnt, fill=(255, 255, 255), stroke_width=1) # Draw week text
-    fnt = ImageFont.truetype("Fonts/Abel-regular.ttf", 36) # Change font size
+    fnt = ImageFont.truetype("Base/Fonts/Abel-regular.ttf", 36) # Change font size
     for i in range(0, len(teams)): # Loop through teams
         rectangle_coords = [0, 221 + 50 * i, 540, 271 + 50 * i] if i < 16 else [540, 221 + 50 * (i - 16), 1080, 271 + 50 * (i - 16)] # Rectangle for current team
         x_coord_addon = 15 if (i > 8) else 0 # Add on for x coordinates of some textual objects if rank (i + 1) is 2 digits long
@@ -167,7 +167,7 @@ def create_power_rankings_image(teams, team_colors, week):
         d.rectangle(rectangle_coords, fill=team_colors[teams[i]], outline=(255, 255, 255), width=3) # Draw team rectangle with white outline on image
         d.text(numbers_coords, str(i + 1) + ".", font=fnt, fill=(255, 255, 255), stroke_width=1) # Draw rank text
         # Get team logo
-        team_img = Image.open("Team Logos/" + teams[i] + ".png").resize((40, 40)) if (teams[i] != "Panthers" and teams[i] != "Ravens" and teams[i] != "Patriots" and teams[i] != "Seahawks" and teams[i] != "Broncos" and teams[i] != "Football Team" and teams[i] != "Jets" and teams[i] != "49ers") else Image.open("Team Logos/" + teams[i] + ".png").resize((48, 48))
+        team_img = Image.open("Base/Team Logos/" + teams[i] + ".png").resize((40, 40)) if (teams[i] != "Panthers" and teams[i] != "Ravens" and teams[i] != "Patriots" and teams[i] != "Seahawks" and teams[i] != "Broncos" and teams[i] != "Football Team" and teams[i] != "Jets" and teams[i] != "49ers") else Image.open("Base/Team Logos/" + teams[i] + ".png").resize((48, 48))
         img.paste(team_img, img_coords, team_img.convert("RGBA")) # Paste team logo onto image, maintaining transparency
         d.text(name_coords, teams[i], font=fnt, fill=(255, 255, 255), stroke_width=1) # Draw team text
     img.save("Instagram Posts/Week " + str(week) + "/Power Rankings.png") # Save image
@@ -183,21 +183,21 @@ def create_primetime_opener_image(road_team, home_team, week, bets, n):
     '''
     img = Image.new("RGB", (1080, 1080), color=(1, 51, 105)) # Create 1080 x 1080 image with background color (1, 51, 105) in RGB form
     d = ImageDraw.Draw(img) # Create object to be able to draw to image
-    fnt = ImageFont.truetype("Fonts/Abel-regular.ttf", 96) # Set font type and font size
+    fnt = ImageFont.truetype("Base/Fonts/Abel-regular.ttf", 96) # Set font type and font size
     text = road_team.name.upper() if road_team.name != "Football Team" else "WASHINGTON" # Road team name text (special case for Washington, since Football Team is too long)
     d.text((270 - (d.textlength(text, font=fnt) / 2), 0), text, font=fnt, fill=(255, 255, 255), stroke_width=1) # Draw road team name text
     text = home_team.name.upper() if home_team.name != "Football Team" else "WASHINGTON" # Home team name text
     d.text((810 - (d.textlength(text, font=fnt) / 2), 0), text, font=fnt, fill=(255, 255, 255), stroke_width=1) # Draw home team name text
     text = str(round(np.mean(road_team.all_games_stats["PTS"]) + np.mean(home_team.all_games_stats["PTS"]), 1)) # Average total points 
     d.text((908.5 - (d.textlength(text, font=fnt) / 2), 784), text, font=fnt, fill=(255, 255, 255), stroke_width=1) # Draw average total points
-    field_img = Image.open("Football Field.jpg").resize((1080, 507)) # Image of football field to display team logos on
+    field_img = Image.open("Base/Football Field.jpg").resize((1080, 507)) # Image of football field to display team logos on
     img.paste(field_img, (0, 125)) # Paste football field image onto main image
-    road_team_img = Image.open("Team Logos/" + road_team.name + ".png").resize((300, 300)) # Road team logo
+    road_team_img = Image.open("Base/Team Logos/" + road_team.name + ".png").resize((300, 300)) # Road team logo
     img.paste(road_team_img, (121, 213), road_team_img.convert("RGBA")) # Paste road team logo onto image
-    home_team_img = Image.open("Team Logos/" + home_team.name + ".png").resize((300, 300)) # Home team logo
+    home_team_img = Image.open("Base/Team Logos/" + home_team.name + ".png").resize((300, 300)) # Home team logo
     img.paste(home_team_img, (663, 213), home_team_img.convert("RGBA")) # Paste home team logo onto image
     text = "WIN PROBABILITY" 
-    fnt = ImageFont.truetype("Fonts/Abel-regular.ttf", 48) # Change font size 
+    fnt = ImageFont.truetype("Base/Fonts/Abel-regular.ttf", 48) # Change font size 
     d.text((189.5 - (d.textlength(text, font=fnt) / 2), 655), text, font=fnt, fill=(255, 255, 255), stroke_width=1) # Draw "WIN PROBABILITY"
     text = "AVERAGE SPREAD"
     d.text((556 - (d.textlength(text, font=fnt) / 2), 655), text, font=fnt, fill=(255, 255, 255), stroke_width=1) # Draw "AVERAGE SPREAD"
@@ -213,7 +213,7 @@ def create_primetime_opener_image(road_team, home_team, week, bets, n):
     # Paste team images again, but lower down
     img.paste(road_team_img, (15, 732), road_team_img.convert("RGBA"))
     img.paste(home_team_img, (15, 851), home_team_img.convert("RGBA"))
-    fnt = ImageFont.truetype("Fonts/Abel-regular.ttf", 60) # Change font size
+    fnt = ImageFont.truetype("Base/Fonts/Abel-regular.ttf", 60) # Change font size
     # Get road and home text colors (Green or Red or Yellow, depending on who has a higher chance of winning)
     road_team_text_color = (77, 255, 12) if road_team.record[0] > home_team.record[0] else ((254, 11, 27) if road_team.record[0] < home_team.record[0] else (253, 252, 1))
     home_team_text_color = (77, 255, 12) if road_team_text_color == (254, 11, 27) else ((254, 11, 27) if road_team_text_color == (77, 255, 12) else (253, 252, 1))
@@ -239,7 +239,7 @@ def create_primetime_opener_image(road_team, home_team, week, bets, n):
         img.paste(road_team_img, (433, 971), road_team_img.convert("RGBA")) # Paste road team logo next to spread_string
     else: # Should bet on home team spread
         img.paste(home_team_img, (433, 971), home_team_img.convert("RGBA")) # Paste home team logo next to spread_string 
-    fnt = ImageFont.truetype("Fonts/Abel-regular.ttf", 24)
+    fnt = ImageFont.truetype("Base/Fonts/Abel-regular.ttf", 24)
     text = "TIE"
     d.text((52 - (d.textlength(text, font=fnt) / 2), 812), text, font=fnt, fill=(255, 255, 255), stroke_width=1)
     text = str(round(100 - 100 * road_team.record[0] / n - 100 * home_team.record[0] / n, 1)) + "%" # Chance of a tie
@@ -255,15 +255,15 @@ def create_primetime_stat_projections_image(road_team, home_team, week):
     '''
     img = Image.new("RGB", (1080, 1080), color=(1, 51, 105)) # Create a 1080 x 1080 image with background color (1, 51, 105) in RGB form
     d = ImageDraw.Draw(img) # Create an object to draw to the image
-    fnt = ImageFont.truetype("Fonts/Abel-regular.ttf", 96) # Set font type and font size
+    fnt = ImageFont.truetype("Base/Fonts/Abel-regular.ttf", 96) # Set font type and font size
     text = "STAT PROJECTIONS" # Title
     d.text((540 - (d.textlength(text, font=fnt) / 2), 0), text, font=fnt, fill=(255, 255, 255), stroke_width=1) # Draw title
     # Get team logos and paste them onto image
-    road_team_img = Image.open("Team Logos/" + road_team.name + ".png").resize((125, 125))
-    home_team_img = Image.open("Team Logos/" + home_team.name + ".png").resize((125, 125))
+    road_team_img = Image.open("Base/Team Logos/" + road_team.name + ".png").resize((125, 125))
+    home_team_img = Image.open("Base/Team Logos/" + home_team.name + ".png").resize((125, 125))
     img.paste(road_team_img, (478, 135), road_team_img.convert("RGBA"))
     img.paste(home_team_img, (781, 135), home_team_img.convert("RGBA"))
-    fnt = ImageFont.truetype("Fonts/Abel-regular.ttf", 60) # Change font size
+    fnt = ImageFont.truetype("Base/Fonts/Abel-regular.ttf", 60) # Change font size
     # Add simulated average completion percentage to image
     text = "COMP. %"
     d.text((15, 391), text, font=fnt, fill=(255, 255, 255), stroke_width=1)

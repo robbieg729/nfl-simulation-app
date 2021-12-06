@@ -11,7 +11,7 @@ def log_game(road_team, home_team, year, week, team_mnemonics):
     param week: the week of the season the game took place.
     param team_mnemonics: abbreviations used in the gamebooks for the teams.
     '''
-    directory = "Gamebooks/" + str(year) + "/Week " + str(week) 
+    directory = "Base/Gamebooks/" + str(year) + "/Week " + str(week) 
     game = road_team.name + " at " + home_team.name + ".txt" # filename   
     def edit_lines_into_correct_format(lines, road, home):
         '''
@@ -604,7 +604,7 @@ def write_team_data_to_excel_files(team, year="", include_players_data=True):
     turnovers_df = pd.DataFrame([[team.home_int_thrown, team.home_int_got, team.home_fmbl, team.home_fmbl_got], [team.road_int_thrown, team.road_int_got, team.road_fmbl, team.road_fmbl_got]], columns=["INT", "INTg", "FMBL", "FMBLg"], index=["Home", "Road"])
     penalties_df = pd.DataFrame([[team.fst, "Offside", team.offs], [team.off_hold, "Holding", team.def_hold], [team.opi, "Pass interference", team.dpi], [team.intg]], index=["False start", "Holding", "Pass interference", "Intentional grounding"], columns=["OFF", " ", "DEF"])
  
-    with pd.ExcelWriter(team.name + "/" + year + "Team Data.xlsx") as writer: # write data frames to excel simultaneously
+    with pd.ExcelWriter("Base/" + team.name + "/" + year + "Team Data.xlsx") as writer: # write data frames to excel simultaneously
         yards_df.to_excel(writer, sheet_name="YDS")
         off_df.to_excel(writer, sheet_name="OFF")
         two_min_off_df.to_excel(writer, sheet_name="2minOFF")
@@ -618,7 +618,7 @@ def write_team_data_to_excel_files(team, year="", include_players_data=True):
     targ_dep_off_df = pd.DataFrame([[int(d) for d in team.off_target_depth_data[0]], [int(d) for d in team.off_target_depth_data[1]]], columns=["Short Att", "Short Comp", "Deep Att", "Deep Comp", "Short Int", "Deep Int"], index=["H", "R"])
     targ_dep_def_df = pd.DataFrame([[int(d) for d in team.def_target_depth_data[0]], [int(d) for d in team.def_target_depth_data[1]]], columns=["Short Att", "Short Comp", "Deep Att", "Deep Comp", "Short Int", "Deep Int"], index=["H", "R"])
     
-    with pd.ExcelWriter(team.name + "/" + year + "Target Depth Data.xlsx") as writer:
+    with pd.ExcelWriter("Base/" + team.name + "/" + year + "Target Depth Data.xlsx") as writer:
         targ_dep_off_df.to_excel(writer, sheet_name="OFF")
         targ_dep_def_df.to_excel(writer, sheet_name="DEF")
 
@@ -634,7 +634,7 @@ def write_team_data_to_excel_files(team, year="", include_players_data=True):
                     receiving_players.append(player) # add them to receiving_players
         players_rushing_df = pd.DataFrame([[player.name, player.rushing_atts[0], player.rushing_atts[1], player.rushing_atts[2], player.rushing_atts[3]] for player in rushing_players], columns=["Name", "1DATT", "2DATT", "3DATT", "RZATT"])
         players_receiving_df = pd.DataFrame([[player.name, player.receiving_data[0], player.receiving_data[1], player.receiving_data[2], player.receiving_data[3], player.receiving_data[4], player.receiving_data[5]] for player in receiving_players], columns=["Name", "Short Target", "Short Comp", "Deep Target", "Deep Comp", "RZ Target", "RZ Comp"])
-        with pd.ExcelWriter(team.name + "/Players Data.xlsx") as writer:
+        with pd.ExcelWriter("Base/" + team.name + "/Players Data.xlsx") as writer:
             players_rushing_df.to_excel(writer, sheet_name="Rushing")
             players_receiving_df.to_excel(writer, sheet_name="Receiving")
         
