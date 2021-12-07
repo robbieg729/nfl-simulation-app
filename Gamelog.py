@@ -123,7 +123,13 @@ def log_game(road_team, home_team, year, week, team_mnemonics):
         '''
         opposition = home_team if team.name == road_team.name else road_team
         if play_type == "PEN": # update team/opposition penalty variables if play type is a penalty
-            team.tot_off_plays += 1
+            # update total plays variables
+            if team.name == road_team.name:
+                team.road_tot_off_plays += 1
+                opposition.home_tot_def_plays += 1
+            else:
+                team.home_tot_off_plays += 1
+                opposition.road_tot_def_plays += 1
             if play_result == "FST": # false start
                 team.fst += 1
             elif play_result == "OFFHOLD": # offensive hold
@@ -140,19 +146,19 @@ def log_game(road_team, home_team, year, week, team_mnemonics):
                 opposition.dpi += 1
         elif play_type == "PT": # update team/opposition punt variables if play is a punt
             team.pt += 1 # number of punts           
-            team.ptd.append(int(play_result[0:play_result.index("D")])) # punt distance
+            team.ptd = np.append(team.ptd, int(play_result[0:play_result.index("D")])) # punt distance
             return_yardage = int(play_result[play_result.index("D") + 1:]) # return distance (0 if fair catch/not fielded)
-            team.ptra.append(return_yardage) # add return_yardage to kicking team punt return allowed list
-            opposition.ptrm.append(return_yardage) # add return_yardage to return team punt return made list
+            team.ptra = np.append(team.ptra, return_yardage) # add return_yardage to kicking team punt return allowed list
+            opposition.ptrm = np.append(opposition.ptrm, return_yardage) # add return_yardage to return team punt return made list
         elif play_type == "KO": # update team/opposition kickoff variables if play is a kickoff
             team.ko += 1 # number of kickoffs
             if "TB" in play_result: # play result is a touchback
                 team.kotb += 1 # number of touchbacks
             else:
-                team.kod.append(int(play_result[0:play_result.index("D")])) # kickoff distance
+                team.kod = np.append(team.kod, int(play_result[0:play_result.index("D")])) # kickoff distance
                 return_yardage = int(play_result[play_result.index("D") + 1:]) # return distance
-                team.kora.append(return_yardage) # add return_yardage to kicking team kick return allowed list
-                opposition.korm.append(return_yardage) # add return_yardage to return team kick return made list
+                team.kora = np.append(team.kora, return_yardage) # add return_yardage to kicking team kick return allowed list
+                opposition.korm = np.append(opposition.korm, return_yardage) # add return_yardage to return team kick return made list
         elif play_type == "2P": # play type is a 2 point conversion
             team.two_pa += 1 # 2 pointers attempted
             if play_result == "2PS": # 2 point attempt converted
@@ -363,8 +369,8 @@ def log_game(road_team, home_team, year, week, team_mnemonics):
                     opposition_updating_list[distance_index][1] += 1 # add pass attempt to downs data list for opposition (defense)
                     if "INT" not in play_result and "IC" not in play_result and "SACK" not in play_result: # completed pass
                         yardage = int(play_result[0:play_result.index("Y")]) # yardage gained
-                        team.pass_yards_list.append(yardage) # add yardage gained to team pass yards gained list
-                        opposition.pass_yards_against_list.append(yardage) # add yardage allowed to opposition pass yards allowed list
+                        team.pass_yards_list = np.append(team.pass_yards_list, yardage) # add yardage gained to team pass yards gained list
+                        opposition.pass_yards_against_list = np.append(opposition.pass_yards_against_list, yardage) # add yardage allowed to opposition pass yards allowed list
                         team.players[position_targeted][player_targeted_index].rec_yards_list.append(yardage) # add yardage gained to targeted receiver's receiving yards gained list
             elif play_type == "R": # play type is a run
                 player_index = 0
@@ -407,8 +413,8 @@ def log_game(road_team, home_team, year, week, team_mnemonics):
                             team.players[position][player_index].rushing_atts[3] += 1 # add 1 redzone rushing attempt for player
                 if down != 4:
                     yardage = int(play_result[0:play_result.index("Y")]) 
-                    team.rush_yards_list.append(yardage)
-                    opposition.rush_yards_against_list.append(yardage)
+                    team.rush_yards_list = np.append(team.rush_yards_list, yardage)
+                    opposition.rush_yards_against_list = np.append(opposition.rush_yards_against_list, yardage)
                     team.players[position][player_index].rush_yards_list.append(yardage) # add yardage gained to rusher's rush yards gained list
                     team_updating_list[distance_index][0] += 1 # add rush attempt to downs data list for team (offense)
                     opposition_updating_list[distance_index][0] += 1 # add pass attempt to downs data list for opposition (defense)
@@ -604,7 +610,7 @@ def write_team_data_to_excel_files(team, year="", include_players_data=True):
     turnovers_df = pd.DataFrame([[team.home_int_thrown, team.home_int_got, team.home_fmbl, team.home_fmbl_got], [team.road_int_thrown, team.road_int_got, team.road_fmbl, team.road_fmbl_got]], columns=["INT", "INTg", "FMBL", "FMBLg"], index=["Home", "Road"])
     penalties_df = pd.DataFrame([[team.fst, "Offside", team.offs], [team.off_hold, "Holding", team.def_hold], [team.opi, "Pass interference", team.dpi], [team.intg]], index=["False start", "Holding", "Pass interference", "Intentional grounding"], columns=["OFF", " ", "DEF"])
  
-    with pd.ExcelWriter("Base/" + team.name + "/" + year + "Team Data.xlsx") as writer: # write data frames to excel simultaneously
+    with pd.ExcelWriter("Base/Teams/" + team.name + "/" + year + "Team Data.xlsx") as writer: # write data frames to excel simultaneously
         yards_df.to_excel(writer, sheet_name="YDS")
         off_df.to_excel(writer, sheet_name="OFF")
         two_min_off_df.to_excel(writer, sheet_name="2minOFF")
@@ -618,7 +624,7 @@ def write_team_data_to_excel_files(team, year="", include_players_data=True):
     targ_dep_off_df = pd.DataFrame([[int(d) for d in team.off_target_depth_data[0]], [int(d) for d in team.off_target_depth_data[1]]], columns=["Short Att", "Short Comp", "Deep Att", "Deep Comp", "Short Int", "Deep Int"], index=["H", "R"])
     targ_dep_def_df = pd.DataFrame([[int(d) for d in team.def_target_depth_data[0]], [int(d) for d in team.def_target_depth_data[1]]], columns=["Short Att", "Short Comp", "Deep Att", "Deep Comp", "Short Int", "Deep Int"], index=["H", "R"])
     
-    with pd.ExcelWriter("Base/" + team.name + "/" + year + "Target Depth Data.xlsx") as writer:
+    with pd.ExcelWriter("Base/Teams/" + team.name + "/" + year + "Target Depth Data.xlsx") as writer:
         targ_dep_off_df.to_excel(writer, sheet_name="OFF")
         targ_dep_def_df.to_excel(writer, sheet_name="DEF")
 
@@ -634,7 +640,7 @@ def write_team_data_to_excel_files(team, year="", include_players_data=True):
                     receiving_players.append(player) # add them to receiving_players
         players_rushing_df = pd.DataFrame([[player.name, player.rushing_atts[0], player.rushing_atts[1], player.rushing_atts[2], player.rushing_atts[3]] for player in rushing_players], columns=["Name", "1DATT", "2DATT", "3DATT", "RZATT"])
         players_receiving_df = pd.DataFrame([[player.name, player.receiving_data[0], player.receiving_data[1], player.receiving_data[2], player.receiving_data[3], player.receiving_data[4], player.receiving_data[5]] for player in receiving_players], columns=["Name", "Short Target", "Short Comp", "Deep Target", "Deep Comp", "RZ Target", "RZ Comp"])
-        with pd.ExcelWriter("Base/" + team.name + "/Players Data.xlsx") as writer:
+        with pd.ExcelWriter("Base/Teams/" + team.name + "/Players Data.xlsx") as writer:
             players_rushing_df.to_excel(writer, sheet_name="Rushing")
             players_receiving_df.to_excel(writer, sheet_name="Receiving")
         

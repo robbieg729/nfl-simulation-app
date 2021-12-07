@@ -68,13 +68,13 @@ class Team:
         self.two_min_def_td = np.transpose(self.two_min_def_sheet.values[:, 7:10])
         self.ko = self.st_sheet["KO"][0] # Kickoffs made
         self.kotb = self.st_sheet["KO"][1] # Touchbacks made
-        self.kod = np.array([int(self.st_sheet["KO"][2])]) if (type(self.st_sheet["KO"][2]) == np.int64 or type(self.st_sheet["KO"][2]) == float or type(self.st_sheet["KO"][2]) == np.float64) else ([int(d) for d in self.st_sheet["KO"][2].split(" ")] if self.st_sheet["KO"][2] != "n" else [])
-        self.kora = np.array([int(self.st_sheet["KO"][3])]) if (type(self.st_sheet["KO"][3]) == np.int64 or type(self.st_sheet["KO"][3]) == float or type(self.st_sheet["KO"][3]) == np.float64) else ([int(d) for d in self.st_sheet["KO"][3].split(" ")] if self.st_sheet["KO"][3] != "n" else [])
-        self.korm = np.array([int(self.st_sheet["KO"][4])]) if (type(self.st_sheet["KO"][4]) == np.int64 or type(self.st_sheet["KO"][4]) == float or type(self.st_sheet["KO"][4]) == np.float64) else ([int(d) for d in self.st_sheet["KO"][4].split(" ")] if self.st_sheet["KO"][4] != "n" else [])
+        self.kod = np.array([int(self.st_sheet["KO"][2])]) if (type(self.st_sheet["KO"][2]) == np.int64 or type(self.st_sheet["KO"][2]) == float or type(self.st_sheet["KO"][2]) == np.float64) else (np.array([int(d) for d in self.st_sheet["KO"][2].split(" ")]) if self.st_sheet["KO"][2] != "n" else [])
+        self.kora = np.array([int(self.st_sheet["KO"][3])]) if (type(self.st_sheet["KO"][3]) == np.int64 or type(self.st_sheet["KO"][3]) == float or type(self.st_sheet["KO"][3]) == np.float64) else (np.array([int(d) for d in self.st_sheet["KO"][3].split(" ")]) if self.st_sheet["KO"][3] != "n" else [])
+        self.korm = np.array([int(self.st_sheet["KO"][4])]) if (type(self.st_sheet["KO"][4]) == np.int64 or type(self.st_sheet["KO"][4]) == float or type(self.st_sheet["KO"][4]) == np.float64) else (np.array([int(d) for d in self.st_sheet["KO"][4].split(" ")]) if self.st_sheet["KO"][4] != "n" else [])
         self.pt = self.st_sheet["PT"][0] # Punts made
-        self.ptd = np.array([int(self.st_sheet["PT"][1])]) if (type(self.st_sheet["PT"][1]) == np.int64 or type(self.st_sheet["PT"][1]) == float or type(self.st_sheet["PT"][1]) == np.float64) else ([int(d) for d in self.st_sheet["PT"][1].split(" ")] if self.st_sheet["PT"][1] != "n" else [])
-        self.ptra = np.array([int(self.st_sheet["PT"][2])]) if (type(self.st_sheet["PT"][2]) == np.int64 or type(self.st_sheet["PT"][2]) == float or type(self.st_sheet["PT"][2]) == np.float64) else ([int(d) for d in self.st_sheet["PT"][2].split(" ")] if self.st_sheet["PT"][2] != "n" else [])
-        self.ptrm = np.array([int(self.st_sheet["PT"][3])]) if (type(self.st_sheet["PT"][3]) == np.int64 or type(self.st_sheet["PT"][3]) == float or type(self.st_sheet["PT"][3]) == np.float64) else ([int(d) for d in self.st_sheet["PT"][3].split(" ")] if self.st_sheet["PT"][3] != "n" else [])
+        self.ptd = np.array([int(self.st_sheet["PT"][1])]) if (type(self.st_sheet["PT"][1]) == np.int64 or type(self.st_sheet["PT"][1]) == float or type(self.st_sheet["PT"][1]) == np.float64) else (np.array([int(d) for d in self.st_sheet["PT"][1].split(" ")]) if self.st_sheet["PT"][1] != "n" else [])
+        self.ptra = np.array([int(self.st_sheet["PT"][2])]) if (type(self.st_sheet["PT"][2]) == np.int64 or type(self.st_sheet["PT"][2]) == float or type(self.st_sheet["PT"][2]) == np.float64) else (np.array([int(d) for d in self.st_sheet["PT"][2].split(" ")]) if self.st_sheet["PT"][2] != "n" else [])
+        self.ptrm = np.array([int(self.st_sheet["PT"][3])]) if (type(self.st_sheet["PT"][3]) == np.int64 or type(self.st_sheet["PT"][3]) == float or type(self.st_sheet["PT"][3]) == np.float64) else (np.array([int(d) for d in self.st_sheet["PT"][3].split(" ")]) if self.st_sheet["PT"][3] != "n" else [])
         self.fga_40 = self.st_sheet["FG40-A"][0] # Field goals <40 yards attempted
         self.fgm_40 = self.st_sheet["FG40-M"][0] # Field goals <40 yards made
         self.fga_50 = self.st_sheet["FG50-A"][0] # Field goals 40-49 yards attempted
@@ -102,7 +102,7 @@ class Team:
         self.dfod_a = self.def_sheet["4DA"][0] # Defensive 4th downs faced
         self.dfod_m = self.def_sheet["4DM"][0] # Defensive 4th downs allowed
         self.home_tot_def_plays = self.def_sheet["TOTPLAYS"][0] # Total home defensive plays
-        self.road_tot_def_plays = self.def_sheet["TOTPLAYS"][1] # Total road defensive plays
+        self.road_tot_def_plays = self.def_sheet["TOTPLAYS"][1] # Total road defensive plays        
         self.fst = self.pen_sheet["OFF"][0] # False starts
         self.off_hold = self.pen_sheet["OFF"][1] # Offensive holds
         self.opi = self.pen_sheet["OFF"][2] # Offensive pass interferences
@@ -301,15 +301,15 @@ class Simulation_Team(Team):
         self.fmbl = self.home_fmbl + self.road_fmbl
         self.fmbl_got = self.home_fmbl_got + self.road_fmbl_got
         # Combining home and road total plays stats
-        self.tot_off_plays = self.home_tot_off_plays + self.road_tot_off_plays 
-        self.tot_def_plays = self.home_tot_def_plays + self.road_tot_def_plays
+        self.tot_off_plays = self.home_tot_off_plays + self.road_tot_off_plays
+        self.tot_def_plays = self.home_tot_def_plays + self.road_tot_def_plays       
         self.fst_per = self.fst / self.tot_off_plays # Proportion of offensive plays beginning with a false start
         self.off_hold_per = self.off_hold / self.tot_off_plays # Proportion of offensive plays containing an offensive hold
         self.opi_per = self.opi / self.tot_off_plays # Proportion of offensive plays containing offensive pass interference
         self.intg_per = self.intg / self.tot_off_plays # Proportion of offensive plays containing intentional grounding
         self.offs_per = self.offs / self.tot_def_plays # Proportion of defensive plays containing an offside/encroachment/neutral zone infraction
         self.def_hold_per = self.def_hold / self.tot_def_plays # Proportion of defensive plays containing a defensive hold
-        self.dpi_per = self.dpi / self.tot_def_plays # Proportion of defensive plays containing a defensive pass interference
+        self.dpi_per = self.dpi / self.tot_def_plays # Proportion of defensive plays containing a defensive pass interference        
         self.timeouts = 3
         self.points = 0 # Points in a single game
         # Team stats
