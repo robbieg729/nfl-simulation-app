@@ -36,19 +36,19 @@ The .py files are intended to be viewed only, not used. They have no options for
 ### Classes
 Classes.py contains the class definitions needed for simulations. It contains a class Team, which is only used for logging data, a class Player, which is used when logging data and during simulations, and a class SimulationTeam, which is a sub-class of Team, and is used only during simulations.
 
-### Gamelog.py
+### Gamelog
 Gamelog.py contains functions necessary for logging data. The log_game function takes two Team variables and the gamebook from their matchup, and reads each line from the gamebook to update class variables in each Team object. The function write_team_data_to_excel_files then writes the updated data back into an Excel Spreadsheet.
 
-### Image_Making.py
+### Image_Making
 Image_Making.py contains various functions which create graphics for social media, based on inputted data. The functions make use of the Python Imaging Library (PIL) to create and draw to images.
 
-### Other_Functions.py
+### Other_Functions
 Other_Functions.py contains functions that need to be accessed by multiple .py or .ipynb files, such as return_best_fit_in_str_format, and bubble_sort_by_fpts.
 
-### Simulate.py
+### Simulate
 Simulate.py contains the base simulate() function, which describes the algorithm for simulating games. All of the .ipynb files and any .py files that involve simulation make use of this file. The file contains other functions which continuously update stats for the teams and players involved in the simulation.
 
-### Simulate_Season.py
+### Simulate_Season
 Simulate_Season.py uses the simulate() function from Simulate.py to simulate an entire season of the NFL (or from a given starting point). The file contains other functions which continuously update stats for the teams and players involved in the simulation.
 ***
 
@@ -63,25 +63,25 @@ The .ipynb files are intended to be used as well as viewed. Each of them perform
 6. [Simulate_Single_Week](#simulate_single_week)
 7. [Single_Game_Win_Probability_Chart_Maker](#single_game_win_probability_chart_maker)
 
-### Distribution_Getter.ipynb
+### Distribution_Getter
 Distribution_Getter.ipynb calculates the best fit to a statistical distribution for every team's offensive and defensive rush and pass yards. These best fits are used in the simulate() function to generate random variables corresponding to a yardage gain on a single play. The best fits are written into Excel spreadsheets, so that they can be accessed by Simulate.py.
 
-### Log_Week.ipynb
+### Log_Week
 Log_Week.ipynb updates team and player data for every team from a single week, and re-writes it back to Excel. All the user would need to do is specify the year and week before run-time, and the program will take care of the rest.
 
-### Power_Rankings_Image.ipynb
+### Power_Rankings_Image
 Power_Rankings_Image.ipynb creates and saves a graphic displaying the user-given power rankings of all 32 NFL teams. Before run-time, the user must specify the week of the season which the power rankings are for (usually the number of the week after the one that has just been played). Once the program is run, the user will be prompted to enter their power rankings, from 1 to 32, but their input must obey the format given in the team_mnemonics variable. So if they wanted to enter the Arizona Cardinals for a certain rank, they would type "ARI" and hit Enter. The user would then automatically be prompted to enter the next team, and so on.
 
-### Simulate_Single_Game.ipynb
+### Simulate_Single_Game
 Simulate_Single_Game.ipynb prompts the user to input a road team and a home team, and proceeds to simulate that matchup for a certain number of times, which is controlled by the variable n. The program then prints various statistics from the simulations, including the overall number of wins for each team from n simulations. Note that simulating a matchup 1,000 times will take around 20 seconds, so the user should not go too big on the variable n, especially considering that the results do not change that much when n = 10,000 compared to n = 1,000.
 
-### Simulate_Single_Season.ipynb
+### Simulate_Single_Season
 Simulate_Single_Season.ipynb simulates a single season of the NFL, including playoffs, and writes results such as Super Bowl chances and playoff chances for each team to a single Excel file in the "Season Simulations" sub-directory. The user can specify the week to start simulating from, and the number of times to simulate the season, before run-time.
 
-### Simulate_Single_Week.ipynb
+### Simulate_Single_Week
 Simulate_Single_Week.ipynb simulates a full week of the NFL season, and outputs results of game simulations to Excel files, as well as calculating fantasy projections for players which are displayed via graphics and saved to the "Instagram Posts" sub-directory. User input can get a little tricky here and I am currently working on a better solution, but the variables that the user needs to specify before run-time are the schedule of the week, the week of the year being simulated, the number of times to simulate each game, and bets given by [FanDuel Sportsbook](https://sportsbook.fanduel.com/). Comments in the actual code explain this further.
 
-### Single_Game_Win_Probability_Chart_Maker.ipynb
+### Single_Game_Win_Probability_Chart_Maker
 Single_Game_Win_Probability_Chart_Maker.ipynb simulates a game n times, from the beginning of every play in the game, saves the win probabilities at each time for one of the teams, and generates a line graph showing win probability against time. User input for this program is also a bit tricky, as there is no option to just specify a game from the season, because the program requires an Excel spreadsheet with the initial_variables (see simulate() function in Simulate.py) at the beginning of every play, which is difficult to generate for a game. The example given in the code currently is the Jaguars-Bengals game from Week 4, 2021, where the Bengals were down 14-0 at the half and almost down 21-0 just before the half. For now, the user can just run this program and see the kind of input it generates, though it can take a while for all the simulations to complete (the user can again specify the variable n to control the number of simulations at each play).
 *** 
 
