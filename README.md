@@ -27,11 +27,11 @@ The technologies used in this project are:
 ***
 The .py files are intended to be viewed only, not used. They have no options for user input, contain only functions, and are simply imported into the .ipynb files for simulation.
 1. [Classes](#classes)
-2. [Gamelog.py](#gamelog.py)
-3. [Image_Making.py](#image_making.py)
-4. [Other_Functions.py](#other_functions.py)
-5. [Simulate.py](#simulate.py)
-6. [Simulate_Season.py](#simulate_season.py)
+2. [Gamelog](#gamelog)
+3. [Image_Making](#image_making)
+4. [Other_Functions](#other_functions)
+5. [Simulate](#simulate)
+6. [Simulate_Season](#simulate_season)
 
 ### Classes
 Classes.py contains the class definitions needed for simulations. It contains a class Team, which is only used for logging data, a class Player, which is used when logging data and during simulations, and a class SimulationTeam, which is a sub-class of Team, and is used only during simulations.
@@ -55,13 +55,13 @@ Simulate_Season.py uses the simulate() function from Simulate.py to simulate an 
 ## .ipynb files
 ***
 The .ipynb files are intended to be used as well as viewed. Each of them perform a specific task which is described by the filename, and involve user input of some form.
-1. [Distribution_Getter.ipynb](#distribution_getter.ipynb)
-2. [Log_Week.ipynb](#log_week.ipynb)
-3. [Power_Rankings_Image.ipynb](#power_rankings_image.ipynb)
-4. [Simulate_Single_Game.ipynb](#simulate_single_game.ipynb)
-5. [Simulate_Single_Season.ipynb](#simulate_single_season.ipynb)
-6. [Simulate_Single_Week.ipynb](#simulate_single_week.ipynb)
-7. [Single_Game_Win_Probability_Chart_Maker.ipynb](#single_game_win_probability_chart_maker.ipynb)
+1. [Distribution_Getter](#distribution_getter)
+2. [Log_Week](#log_week)
+3. [Power_Rankings_Image](#power_rankings_image)
+4. [Simulate_Single_Game](#simulate_single_game)
+5. [Simulate_Single_Season](#simulate_single_season)
+6. [Simulate_Single_Week](#simulate_single_week)
+7. [Single_Game_Win_Probability_Chart_Maker](#single_game_win_probability_chart_maker)
 
 ### Distribution_Getter.ipynb
 Distribution_Getter.ipynb calculates the best fit to a statistical distribution for every team's offensive and defensive rush and pass yards. These best fits are used in the simulate() function to generate random variables corresponding to a yardage gain on a single play. The best fits are written into Excel spreadsheets, so that they can be accessed by Simulate.py.
