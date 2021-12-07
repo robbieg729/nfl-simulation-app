@@ -26,14 +26,14 @@ The technologies used in this project are:
 ## .py files
 ***
 The .py files are intended to be viewed only, not used. They have no options for user input, contain only functions, and are simply imported into the .ipynb files for simulation.
-1. [Classes.py](##classes.py)
+1. [Classes](#classes)
 2. [Gamelog.py](#gamelog.py)
 3. [Image_Making.py](#image_making.py)
 4. [Other_Functions.py](#other_functions.py)
 5. [Simulate.py](#simulate.py)
 6. [Simulate_Season.py](#simulate_season.py)
 
-### Classes.py
+### Classes
 Classes.py contains the class definitions needed for simulations. It contains a class Team, which is only used for logging data, a class Player, which is used when logging data and during simulations, and a class SimulationTeam, which is a sub-class of Team, and is used only during simulations.
 
 ### Gamelog.py
