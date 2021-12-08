@@ -30,9 +30,9 @@ def create_win_probabilities_image(matchups_data, week, img_number):
         base_rectangle_coords = [327.5, 221 + 100 * i, 752.5, 271 + 100 * i] # Underlying continuous bar coordinates. Road team bar is laid over this bar.
         tie_y_coord = 282.5 + 100 * i # Coordinates for text showing chance of a tie
         tie_rectangle_coords = [0, 221 + 100 * i, 0, 271 + 100 * i] # Coordinates for a thin white rectangle that will also be laid over the base, showing chances of a tie.
-        road_img = Image.open("Base/Base/Team Logos/" + matchup[0] + ".png").resize((90, 90)) # Get road team image and resize to 90 x 90
+        road_img = Image.open("Base/Team Logos/" + matchup[0] + ".png").resize((90, 90)) # Get road team image and resize to 90 x 90
         img.paste(road_img, road_img_coords, road_img.convert("RGBA")) # paste road team image onto main image, while maintaining transparency
-        home_img = Image.open("Base/Base/Team Logos/" + matchup[2] + ".png").resize((90, 90))
+        home_img = Image.open("Base/Team Logos/" + matchup[2] + ".png").resize((90, 90))
         img.paste(home_img, home_img_coords, home_img.convert("RGBA"))        
         if matchup[1] > matchup[3]: # road team has a higher chance of winning
             road_fill = (77, 255, 12) # road fill set to a green color
