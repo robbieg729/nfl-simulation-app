@@ -63,8 +63,6 @@ Penalty on DEN-D.Jones, Defensive Offside, declined.
 1-10-DEN 12 (13:20) C.Reynolds right end to DEN 7 for 5 yards (J.Simmons).
 2-5-DEN 7 (12:38) J.Goff pass short left to K.Raymond for 7 yards, TOUCHDOWN. P4
 R.Patterson extra point is GOOD, Center-S.Daly, Holder-J.Fox.
-PENALTY on DET-S.Daly, False Start, 5 yards, enforced at DEN 15 - No Play.
-R.Patterson extra point is GOOD, Center-S.Daly, Holder-J.Fox.
  DET 7 DEN 14, 7 plays, 75 yards, 3:22 drive, 2:29 elapsed
 J.Fox kicks 65 yards from DET 35 to end zone, Touchback.
 Denver Broncos at 12:31
@@ -167,7 +165,7 @@ Detroit Lions at 6:34
 (6:34) J.Goff pass short left to B.Wright to DET 36 for 11 yards (K.Jackson, B.Chubb).
 1-10-DET 25 P9
 1-10-DET 36 (5:56) M.Nelson reported in as eligible. C.Reynolds right guard to DET 43 for 7 yards (J.Cooper). DEN-S.Harris was injured during the play.
-2-3-DET 43 (5:35) J.Goff pass short middle to T.Decker to DET 41 for -2 yards (B.Browning).
+2-3-DET 43 (5:35) J.Goff pass short middle to J.Reynolds to DET 41 for -2 yards (B.Browning).
 3-5-DET 41 (4:54) M.Nelson reported in as eligible. G.Igwebuike left guard to DET 44 for 3 yards (J.Cooper).
 4-2-DET 44 (4:14) G.Igwebuike up the middle to DET 48 for 4 yards (B.Chubb). R10
 1-10-DET 48 (3:32) (Shotgun) J.Goff pass short middle to A.St. Brown to DEN 43 for 9 yards (K.Jackson, M.Purcell).
