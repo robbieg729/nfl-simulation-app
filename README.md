@@ -62,6 +62,7 @@ The .ipynb files are intended to be used as well as viewed. Each of them perform
 5. [Simulate_Single_Season](#simulate_single_season)
 6. [Simulate_Single_Week](#simulate_single_week)
 7. [Single_Game_Win_Probability_Chart_Maker](#single_game_win_probability_chart_maker)
+8. [Situational_Win_Probability_Calculator](#situational_win_probability_calculator)
 
 ### Distribution_Getter
 Distribution_Getter.ipynb calculates the best fit to a statistical distribution for every team's offensive and defensive rush and pass yards. These best fits are used in the simulate() function to generate random variables corresponding to a yardage gain on a single play. The best fits are written into Excel spreadsheets, so that they can be accessed by Simulate.py.
@@ -83,6 +84,9 @@ Simulate_Single_Week.ipynb simulates a full week of the NFL season, and outputs 
 
 ### Single_Game_Win_Probability_Chart_Maker
 Single_Game_Win_Probability_Chart_Maker.ipynb simulates a game n times, from the beginning of every play in the game, saves the win probabilities at each time for one of the teams, and generates a line graph showing win probability against time. User input for this program is also a bit tricky, as there is no option to just specify a game from the season, because the program requires an Excel spreadsheet with the initial_variables (see simulate() function in Simulate.py) at the beginning of every play, which is difficult to generate for a game. The example given in the code currently is the Jaguars-Bengals game from Week 4, 2021, where the Bengals were down 14-0 at the half and almost down 21-0 just before the half. For now, the user can just run this program and see the kind of input it generates, though it can take a while for all the simulations to complete (the user can again specify the variable n to control the number of simulations at each play).
+
+### Situational_Win_Probability_Calculator
+Situational_Win_Probability_Calculator.ipynb allows evaluation of in-game decisions by Head Coaches, by calculating a teams win probability by attempting a certain play in a certain situation. For example, if a team was deciding whether or not to go for a touchdown on 4th and Goal at the 1 in a tied game late in the fourth quarter, the win probabilities for a run, pass, or field goal attempt could be calculated. The example that currently runs in the code is just that, involving Bengals Head Coach Zac Taylor's late decisions to go for it on 4th down against the Chiefs in Week 17 of the 2021 season. Currently working on a way to involve more user input.
 *** 
 
 ## Sub-directories

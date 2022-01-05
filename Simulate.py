@@ -2,13 +2,14 @@ import random as rd
 import numpy as np
 import scipy.stats as stat
 
-def simulate(road_team, home_team, initial_variables={"t": 3600, "down": 1, "distance": 10, "yards_to_endzone": 65, "ko_team": None, "team_in_poss": None, "opposition": None, "road_team_timeouts": 3, "home_team_timeouts": 3, "road_team_points": 0, "home_team_points": 0, "clock_running": "N", "td_play": "N", "kickoff": "Y", "safety_kick": "N", "hurry_up": "N", "overtime": "N", "sudden_death": "N"}, playoff_game=False):
+def simulate(road_team, home_team, initial_variables={"t": 3600, "down": 1, "distance": 10, "yards_to_endzone": 65, "ko_team": None, "team_in_poss": None, "opposition": None, "road_team_timeouts": 3, "home_team_timeouts": 3, "road_team_points": 0, "home_team_points": 0, "clock_running": "N", "td_play": "N", "kickoff": "Y", "safety_kick": "N", "hurry_up": "N", "overtime": "N", "sudden_death": "N"}, playoff_game=False, forced_play=None):
     '''
     Method to simulate an entire game.
     param road_team: the road team playing.
     param home_team: the home team playing.
     param initial_variables: the starting point of the game. If unspecified, defaults to the beginning of a game.
     param playoff_game: boolean specifying whether or not the game is a playoff game, for tie implications. If unspecified, defaults to False.
+    param forced_play: variable to specify a play that we want to force the offense to do. Used to calculate situational win probabilities, e.g. going for it on 4th down vs field goal. Defaults to None.
     '''
     t = initial_variables["t"] # time left in seconds
     down = initial_variables["down"] # current down
@@ -33,6 +34,7 @@ def simulate(road_team, home_team, initial_variables={"t": 3600, "down": 1, "dis
     hurry_up = True if initial_variables["hurry_up"] == "Y" else False # boolean specifying if a team is in hurry-up mode
     overtime = True if initial_variables["overtime"] == "Y" else False # boolean specifying if the game is in overtime
     sudden_death = True if initial_variables["sudden_death"] == "Y" else False # boolean specifying if the game is in sudden death (overtime only)
+    play = ""
     play_result = ""
     untimed_down = False # boolean specifying if an untimed down should be run
     if overtime == False: # in regulation
@@ -51,7 +53,11 @@ def simulate(road_team, home_team, initial_variables={"t": 3600, "down": 1, "dis
                     team_in_poss = home_team if ko_team.name == road_team.name else road_team
                     opposition = home_team if team_in_poss.name == road_team.name else road_team
                 # get the next play (e.g. run/pass/field goal etc.)
-                play = get_play(t, down, distance, yards_to_endzone, team_in_poss, opposition, clock_running, td_play, kickoff, safety_kick, hurry_up)
+                if forced_play is not None: # if we want to force a play
+                    play = get_play(t, down, distance, yards_to_endzone, team_in_poss, opposition, clock_running, td_play, kickoff, safety_kick, hurry_up, forced_play=forced_play)
+                    forced_play = None # set to None so that there is no forced play on the next play
+                else:
+                    play = get_play(t, down, distance, yards_to_endzone, team_in_poss, opposition, clock_running, td_play, kickoff, safety_kick, hurry_up)
                 # get the result of the play 
                 play_result = get_play_result(play, t, down, distance, yards_to_endzone, team_in_poss, opposition)                
                 # get the new variables from the play result
@@ -92,7 +98,11 @@ def simulate(road_team, home_team, initial_variables={"t": 3600, "down": 1, "dis
             else:            
                 t = new_time_left(t, pre_snap_time_loss, after_snap=False)
             if t != 0:
-                play = get_play(t, down, distance, yards_to_endzone, team_in_poss, opposition, clock_running, td_play, kickoff, safety_kick, hurry_up, overtime=True, sudden_death=sudden_death)
+                if forced_play is not None: # if we want to force a play
+                    play = get_play(t, down, distance, yards_to_endzone, team_in_poss, opposition, clock_running, td_play, kickoff, safety_kick, hurry_up, overtime=True, sudden_death=sudden_death, forced_play=forced_play)
+                    forced_play = None # set to None so that there is no forced play on the next play
+                else:
+                    play = get_play(t, down, distance, yards_to_endzone, team_in_poss, opposition, clock_running, td_play, kickoff, safety_kick, hurry_up, overtime=True, sudden_death=sudden_death)
                 play_result = get_play_result(play, t, down, distance, yards_to_endzone, team_in_poss, opposition)
                 updated_variables = get_updated_variables(play_result, t, down, distance, yards_to_endzone, team_in_poss, opposition, clock_running, td_play, kickoff, safety_kick, hurry_up)           
                 plays += 1
@@ -138,7 +148,7 @@ def new_time_left(t, time_taken, after_snap=True):
     else:
         return t - time_taken # if there is no carry over, just return time - time loss
 
-def get_play(t, down, distance, yards_to_endzone, team_in_poss, opposition, clock_running, td_play, kickoff, safety_kick, hurry_up, overtime=False, sudden_death=False):        
+def get_play(t, down, distance, yards_to_endzone, team_in_poss, opposition, clock_running, td_play, kickoff, safety_kick, hurry_up, overtime=False, sudden_death=False, forced_play=None):        
     '''
     Method to get the play type of the next play.
     param t: time left.
@@ -154,6 +164,7 @@ def get_play(t, down, distance, yards_to_endzone, team_in_poss, opposition, cloc
     param hurry_up: boolean specifying if offense is in hurry-up.
     param overtime: boolean specifying if game is in overtime. Defaults to False.
     param sudden_death: boolean specifying if game is in sudden_death. Defaults to False.
+    param forced_play: a way of forcing a team to choose a specific play call. Can be used to determine situational win probability. Defaults to None.
     '''
     def check_kneel_scenario(t, team_in_poss, opposition):
         '''
@@ -207,6 +218,8 @@ def get_play(t, down, distance, yards_to_endzone, team_in_poss, opposition, cloc
             play = team_in_poss.name + " PT"
         return play
     play = ""
+    if forced_play is not None: # if we want to force a specific play call
+        return team_in_poss.name + " " + forced_play # return the forced play
     if kickoff == True: # play should be a kickoff
         # Check if team should go for an onside kick or a regular kickoff
         if opposition.points - team_in_poss.points <= 8 and opposition.points - team_in_poss.points > 0 and check_kneel_scenario(t, opposition, team_in_poss) == True:
