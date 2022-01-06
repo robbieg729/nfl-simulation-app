@@ -322,7 +322,7 @@ class Simulation_Team(Team):
         self.record = [int(n) for n in records[0].split("-")] # Overall record
         self.div_record = [int(n) for n in records[1].split("-")] # Divisional record
         self.conf_record = [int(n) for n in records[2].split("-")] # Conference record
-        self.opponents = list() # Opponents in a season
+        self.opponents = np.array(list()) # Opponents in a season
         self.division_position = 0 
         self.seed = 0 # Playoff seed
         self.sov = 0 # Strength of victory

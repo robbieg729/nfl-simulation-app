@@ -1,5 +1,6 @@
 from Simulate import simulate
 import random as rd
+import numpy as np
 
 def simulate_season(teams, schedule, initial_records, start_week):
     '''
@@ -65,11 +66,17 @@ def simulate_season(teams, schedule, initial_records, start_week):
     # Remove top 4 seeds from sorted conference lists
     for team in afc_division_winners:
         afc_sorted.remove(team)
+        print(team.name, " ", team.record)
     for team in nfc_division_winners:
         nfc_sorted.remove(team)
+        print(team.name, " ", team.record)
     # Get wild card teams
     afc_wild_card_teams = get_wild_card_teams(afc_sorted, schedule, teams)
+    for team in afc_wild_card_teams:
+        print(team.name, " ", team.record)    
     nfc_wild_card_teams = get_wild_card_teams(nfc_sorted, schedule, teams)
+    for team in nfc_wild_card_teams:
+        print(team.name, " ", team.record)
     afc_seeds = {}
     nfc_seeds = {}
     # Set seeds in each conference, and update some stats
@@ -183,11 +190,16 @@ def strength_of_victory(team, all_teams, schedule):
     '''
     record = [0, 0, 0]
     opponents_beaten = list()
-    for i in range(0, len(team.opponents)): # loop through opponents
-        week = team.opponents[i][2]
+    for i in range(0, np.shape(team.opponents)[0]): # loop through opponents
+        week = int(team.opponents[i][2])
         opponent = all_teams[team.opponents[i][0]]
         if opponent.name not in opponents_beaten: # checking for double counting a team, e.g. a divisional opponent would be played twice, but their record is only added once to the SOV            
-            result = schedule[week - 1][opponent.name + " at " + team.name] if team.opponents[i][1] == "H" else schedule[week - 1][team.name + " at " + opponent.name] # winner of the game
+            # Get winner of game and store in result
+            result = ""
+            if team.opponents[i][1] == "H":
+                result = schedule[week - 1][opponent.name + " at " + team.name]
+            else:
+                result = schedule[week - 1][team.name + " at " + opponent.name]
             if result == team: # the team we want to calculate SOV for won
                 opponents_beaten.append(opponent.name) # add opponent name to opponents_beaten list
                 # add full record to SOV
@@ -196,7 +208,7 @@ def strength_of_victory(team, all_teams, schedule):
                 record[2] += opponent.record[2]
     return record
 
-def strength_of_schedule(team, all_teams, schedule):
+def strength_of_schedule(team, all_teams):
     '''
     Method to calculate the strength of schedule (SOS) of a single team.
     param team: the team for which to calculate the SOV.
@@ -204,56 +216,97 @@ def strength_of_schedule(team, all_teams, schedule):
     '''
     record = [0, 0, 0]
     opponents_played = list()
-    for i in range(0, len(team.opponents)):
+    for i in range(0, np.shape(team.opponents)[0]):
         opponent = all_teams[team.opponents[i][0]]
         if opponent.name not in opponents_played: # checking for double counting in case of divisional opponents being played
             record[0] += opponent.record[0]
             record[1] += opponent.record[1]
             record[2] += opponent.record[2]
+            opponents_played.append(opponent)
     return record
 
-def sorted_teams_after_multi_hth(teams, schedule, all_teams):
-    hth_records = list()
-    for i in range(0, len(teams)):
-        hth_records.append([0, 0, 0, teams[i].name])
-    for i in range(0, len(teams) - 1):
-        for j in range(0, len(teams[i].opponents)):
-            for k in range(i + 1, len(teams)):
-                if teams[k].name in teams[i].opponents[j][0]:
-                    week = teams[i].opponents[j][2]
-                    result = ""
-                    if teams[i].opponents[j][1] == "H":
-                        result = schedule[week - 1][teams[k].name + " at " + teams[i].name]
-                    else:
-                        result = schedule[week - 1][teams[i].name + " at " + teams[k].name]
-                    if result == teams[i].name:
-                        hth_records[i][0] += 1
-                        hth_records[k][1] += 1
-                    elif result == teams[k].name:
-                        hth_records[k][0] += 1
-                        hth_records[i][1] += 1
-                    else:
-                        hth_records[i][2] += 1
-                        hth_records[k][2] += 1
-    sorted_hth_percentages = list()
-    teams = bubble_sort_teams_by_records(teams, hth_records)
-    for i in range(0, len(teams)):
-        for j in range(0, len(hth_records)):
-            if hth_records[j][3] == teams[i].name:
-                sorted_hth_percentages.append(winning_percentage(hth_records[j]))
-    count = 1
-    if sorted_hth_percentages[0] > sorted_hth_percentages[1]:
-        return [teams[0]]
-    else:
-        for i in range(0, len(sorted_hth_percentages) - 1):
-            j = i + 1
-            if sorted_hth_percentages[i] == sorted_hth_percentages[j]:
-                count += 1
-            else:
-                break
-        return teams[0:count]
+def sorted_teams_after_multi_hth(teams, schedule):
+    '''
+    Method to sort teams after a multi-team head-to-head record check.
+    param teams: the teams to sort.
+    param schedule: the full regular season schedule.
+    '''
+    if check_within_division(teams) == False:
+        teams_beaten = np.zeros((len(teams), len(teams)))
+        for i in range(0, len(teams)):
+            for j in range(i + 1, len(teams)):
+                hth_weeks = np.where(teams[i].opponents[:, 0] == teams[j].name)[0]
+                if teams[i].opponents[hth_weeks] != []:
+                    for k in range(0, len(hth_weeks)):
+                        result = ""
+                        game = teams[i].opponents[hth_weeks[k]]
+                        if game[1] == "H":
+                            result = schedule[int(game[2]) - 1][teams[j].name + " at " + teams[i].name]
+                        else:
+                            result = schedule[int(game[2]) - 1][teams[i].name + " at " + teams[j].name]
+                        if result == teams[i].name:
+                            teams_beaten[i][k - 1] += 1
+                            teams_beaten[i][len(teams) - 1] += 1
 
-def sorted_teams_after_multi_record(teams, schedule, all_teams, record_type):
+        teams_sweep = list()
+        teams_swept = list()
+        for i in range(0, len(teams)):
+            y = np.where(teams_beaten[i] == 0)[0]
+            try:
+                z = y[0]
+            except:
+                teams_sweep.append(teams[i])
+            if len(y) == len(teams) - 1 and len(teams) - 1 not in y:
+                teams_swept.append(teams[i])
+
+        if len(teams_sweep) != 0:
+            return teams_sweep
+        if len(teams_swept) != 0:
+            for i in range(0, len(teams_swept)):
+                teams.remove(teams_swept[i])
+        return teams
+    else:
+        hth_records = list()
+        for i in range(0, len(teams)):
+            hth_records.append([0, 0, 0, teams[i].name])
+        for i in range(0, len(teams) - 1):
+            for j in range(0, np.shape(teams[i].opponents)[0]):
+                for k in range(i + 1, len(teams)):
+                    if teams[k].name in teams[i].opponents[j][0]:
+                        week = int(teams[i].opponents[j][2])
+                        result = ""
+                        if teams[i].opponents[j][1] == "H":
+                            result = schedule[week - 1][teams[k].name + " at " + teams[i].name]
+                        else:
+                            result = schedule[week - 1][teams[i].name + " at " + teams[k].name]
+                        if result == teams[i].name:
+                            hth_records[i][0] += 1
+                            hth_records[k][1] += 1
+                        elif result == teams[k].name:
+                            hth_records[k][0] += 1
+                            hth_records[i][1] += 1
+                        else:
+                            hth_records[i][2] += 1
+                            hth_records[k][2] += 1
+        sorted_hth_percentages = list()
+        teams = bubble_sort_teams_by_records(teams, hth_records)
+        for i in range(0, len(teams)):
+            for j in range(0, len(hth_records)):
+                if hth_records[j][3] == teams[i].name:
+                    sorted_hth_percentages.append(winning_percentage(hth_records[j]))
+        count = 1
+        if sorted_hth_percentages[0] > sorted_hth_percentages[1]:
+            return [teams[0]]
+        else:
+            for i in range(0, len(sorted_hth_percentages) - 1):
+                j = i + 1
+                if sorted_hth_percentages[i] == sorted_hth_percentages[j]:
+                    count += 1
+                else:
+                    break
+            return teams[0:count]
+
+def sorted_teams_after_multi_record(teams, record_type):
     '''
     Method to sort multiple teams by record.
     param teams: the teams to be sorted.
@@ -316,11 +369,11 @@ def tiebreak_teams(teams, within_division, schedule, all_teams):
     if len(teams) == 2:
         team_zero_hth_wins = 0
         team_one_hth_wins = 0
-        for i in range(0, len(teams[0].opponents)):
+        for i in range(0, np.shape(teams[0].opponents)[0]):
             count = 0
             if teams[1].name in teams[0].opponents[i][0]:
                 count += 1
-                week = teams[0].opponents[i][2]
+                week = int(teams[0].opponents[i][2])
                 result = ""
                 if teams[0].opponents[i][1] == "H":
                     result = schedule[week - 1][teams[1].name + " at " + teams[0].name]
@@ -345,49 +398,138 @@ def tiebreak_teams(teams, within_division, schedule, all_teams):
                     return teams[0]
                 elif winning_percentage(teams[1].div_record) > winning_percentage(teams[0].div_record):
                     return teams[1]
-            if winning_percentage(teams[0].conf_record) > winning_percentage(teams[1].conf_record):
-                return teams[0]
-            elif winning_percentage(teams[1].conf_record) > winning_percentage(teams[0].conf_record):
-                return teams[1]
-            else:
-                if winning_percentage(strength_of_victory(teams[0], all_teams, schedule)) > winning_percentage(strength_of_victory(teams[1], all_teams, schedule)):
+                teams = sorted_teams_after_common_games(teams, schedule)
+                if len(teams) == 1:
                     return teams[0]
-                elif winning_percentage(strength_of_victory(teams[1], all_teams, schedule)) > winning_percentage(strength_of_victory(teams[0], all_teams, schedule)):
+                else:
+                    if winning_percentage(teams[0].conf_record) > winning_percentage(teams[1].conf_record):
+                        return teams[0]
+                    elif winning_percentage(teams[1].conf_record) > winning_percentage(teams[0].conf_record):
+                        return teams[1]
+            else:
+                if winning_percentage(teams[0].conf_record) > winning_percentage(teams[1].conf_record):
+                    return teams[0]
+                elif winning_percentage(teams[1].conf_record) > winning_percentage(teams[0].conf_record):
                     return teams[1]
                 else:
-                    if winning_percentage(strength_of_schedule(teams[0], all_teams, schedule)) > winning_percentage(strength_of_victory(teams[1], all_teams, schedule)):
+                    teams = sorted_teams_after_common_games(teams, schedule)
+                    if len(teams) == 1:
                         return teams[0]
-                    elif winning_percentage(strength_of_schedule(teams[1], all_teams, schedule)) > winning_percentage(strength_of_victory(teams[0], all_teams, schedule)):
+            if winning_percentage(strength_of_victory(teams[0], all_teams, schedule)) > winning_percentage(strength_of_victory(teams[1], all_teams, schedule)):
+                return teams[0]
+            elif winning_percentage(strength_of_victory(teams[1], all_teams, schedule)) > winning_percentage(strength_of_victory(teams[0], all_teams, schedule)):
+                return teams[1]
+            else:
+                if winning_percentage(strength_of_schedule(teams[0], all_teams)) > winning_percentage(strength_of_schedule(teams[1], all_teams)):
+                    return teams[0]
+                elif winning_percentage(strength_of_schedule(teams[1], all_teams)) > winning_percentage(strength_of_schedule(teams[0], all_teams)):
+                    return teams[1]
+                else:                        
+                    if (teams[0].season_stats["PTS"] - teams[0].season_stats["PTSA"]) > (teams[1].season_stats["PTS"] - teams[1].season_stats["PTSA"]):
+                        return teams[0]
+                    elif (teams[1].season_stats["PTS"] - teams[1].season_stats["PTSA"]) > (teams[0].season_stats["PTS"] - teams[0].season_stats["PTSA"]):
                         return teams[1]
-                    else:                        
-                        if (teams[0].season_stats["PTS"] - teams[0].season_stats["PTSA"]) > (teams[1].season_stats["PTS"] - teams[1].season_stats["PTSA"]):
-                            return teams[0]
-                        elif (teams[1].season_stats["PTS"] - teams[1].season_stats["PTSA"]) > (teams[0].season_stats["PTS"] - teams[0].season_stats["PTSA"]):
-                            return teams[1]
-                        else:
-                            return teams[0] if rd.random() <= 0.5 else teams[1]
+                    else:
+                        return teams[0] if rd.random() <= 0.5 else teams[1]
     else:
-        teams = sorted_teams_after_multi_hth(teams, schedule, all_teams)
+        teams = sorted_teams_after_multi_hth(teams, schedule)
         if len(teams) == 1:
             return teams[0]
         if within_division == True or check_within_division(teams) == True:
-            teams = sorted_teams_after_multi_record(teams, schedule, all_teams, "div")
+            teams = sorted_teams_after_multi_record(teams, "div")
             if len(teams) == 1:
                 return teams[0]
-        teams = sorted_teams_after_multi_record(teams, schedule, all_teams, "conf")
-        if len(teams) == 1:
-            return teams[0]
+            teams = sorted_teams_after_common_games(teams, schedule)
+            if len(teams) == 1:
+                return teams[0]
+            teams = sorted_teams_after_multi_record(teams, "conf")
+            if len(teams) == 1:
+                return teams[0]
+        else:
+            teams = sorted_teams_after_multi_record(teams, "conf")
+            if len(teams) == 1:
+                return teams[0]
+            teams = sorted_teams_after_common_games(teams, schedule)
+            if len(teams) == 1:
+                return teams[0]
         for team in teams:
             team.sov = strength_of_victory(team, all_teams, schedule)
-        teams = sorted_teams_after_multi_record(teams, schedule, all_teams, "sov")
+        teams = sorted_teams_after_multi_record(teams, "sov")
         if len(teams) == 1:
             return teams[0]
         for team in teams:
-            team.sos = strength_of_schedule(team, all_teams, schedule)
-        teams = sorted_teams_after_multi_record(teams, schedule, all_teams, "sos")
-        if len(teams) == True:
+            team.sos = strength_of_schedule(team, all_teams)
+        teams = sorted_teams_after_multi_record(teams, "sos")
+        if len(teams) == 1:
             return teams[0]
         return teams[rd.randint(0, len(teams) - 1)]           
+
+def sorted_teams_after_common_games(teams, schedule):
+    '''
+    Method to sort teams in a common-games tiebreaking procedure.
+    param teams: the teams involved in the tiebreak.
+    param schedule: the full regular season schedule.
+    '''
+    all_opponents = list()
+    team_records = list()
+    common_opponents = list()
+    for i in range(0, len(teams)):
+        team_records.append([0, 0, 0, teams[i].name])
+        all_opponents.append(teams[i].opponents[:, 0])
+
+    for i in range(0, 17):
+        common_opponent = True
+        opponent = teams[0].opponents[i][0]
+        for j in range(1, len(teams)):
+            if opponent not in all_opponents[j]:
+                common_opponent = False
+                break
+        if common_opponent == True:
+            common_opponents.append(opponent)
+
+    if len(common_opponents) < 4:
+        return teams
+    else:
+        for i in range(0, len(teams)):
+            for j in range(0, len(common_opponents)):
+                indexes = np.where(teams[i].opponents[:, 0] == common_opponents[j])[0]
+                #print(teams[i].name)
+                #print(common_opponents[j])
+                #print(indexes)
+                for k in range(0, len(indexes)):
+                    #print(teams[i].opponents[k, 2])
+                    week = int(teams[i].opponents[indexes[k], 2])
+                    #print(week)
+                    result = ""
+                    #print(teams[i].opponents[k, 1])
+                    if teams[i].opponents[indexes[k], 1] == "H":
+                        result = schedule[week - 1][common_opponents[j] + " at " + teams[i].name]
+                    else:
+                        result = schedule[week - 1][teams[i].name + " at " + common_opponents[j]]
+                    if result == teams[i]:
+                        team_records[i][0] += 1
+                    elif result == common_opponents[j]:
+                        team_records[i][1] += 1
+                    else:
+                        team_records[i][2] += 1
+        teams = bubble_sort_teams_by_records(teams, team_records)
+        sorted_percentages = list()
+        for i in range(0, len(teams)):
+            for j in range(0, len(team_records)):
+                if team_records[j][3] == teams[i].name:
+                    sorted_percentages.append(winning_percentage(team_records[j]))
+        count = 1
+        if sorted_percentages[0] > sorted_percentages[1]:
+            return [teams[0]]
+        else:
+            for i in range(0, len(sorted_percentages) - 1):
+                j = i + 1
+                if sorted_percentages[i] == sorted_percentages[j]:
+                    count += 1
+                else:
+                    break
+            return teams[0:count]
+            
 
 def sort_division_winners(teams, schedule, all_teams):
     '''
@@ -418,7 +560,6 @@ def sort_division_winners(teams, schedule, all_teams):
             temp = teams[i]
             teams[i] = tiebreak
             teams[index] = temp
-            k = 0
     for i in range(0, 4):
         teams[i].seed = i + 1
     return teams      
