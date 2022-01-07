@@ -66,17 +66,11 @@ def simulate_season(teams, schedule, initial_records, start_week):
     # Remove top 4 seeds from sorted conference lists
     for team in afc_division_winners:
         afc_sorted.remove(team)
-        print(team.name, " ", team.record)
     for team in nfc_division_winners:
         nfc_sorted.remove(team)
-        print(team.name, " ", team.record)
     # Get wild card teams
-    afc_wild_card_teams = get_wild_card_teams(afc_sorted, schedule, teams)
-    for team in afc_wild_card_teams:
-        print(team.name, " ", team.record)    
+    afc_wild_card_teams = get_wild_card_teams(afc_sorted, schedule, teams)  
     nfc_wild_card_teams = get_wild_card_teams(nfc_sorted, schedule, teams)
-    for team in nfc_wild_card_teams:
-        print(team.name, " ", team.record)
     afc_seeds = {}
     nfc_seeds = {}
     # Set seeds in each conference, and update some stats
@@ -149,6 +143,7 @@ def simulate_season(teams, schedule, initial_records, start_week):
         teams[team].division_position = 0
         teams[team].sov = 0
         teams[team].sos = 0
+    return [afc_seeds, nfc_seeds]
 
 def winning_percentage(record):
     '''
@@ -232,9 +227,9 @@ def sorted_teams_after_multi_hth(teams, schedule):
     param schedule: the full regular season schedule.
     '''
     if check_within_division(teams) == False:
-        teams_beaten = np.zeros((len(teams), len(teams)))
+        teams_beaten = np.zeros((len(teams), len(teams) + 1))
         for i in range(0, len(teams)):
-            for j in range(i + 1, len(teams)):
+            for j in range(0, len(teams)):
                 hth_weeks = np.where(teams[i].opponents[:, 0] == teams[j].name)[0]
                 if teams[i].opponents[hth_weeks] != []:
                     for k in range(0, len(hth_weeks)):
@@ -243,20 +238,23 @@ def sorted_teams_after_multi_hth(teams, schedule):
                         if game[1] == "H":
                             result = schedule[int(game[2]) - 1][teams[j].name + " at " + teams[i].name]
                         else:
-                            result = schedule[int(game[2]) - 1][teams[i].name + " at " + teams[j].name]
-                        if result == teams[i].name:
-                            teams_beaten[i][k - 1] += 1
-                            teams_beaten[i][len(teams) - 1] += 1
-
+                            result = schedule[int(game[2]) - 1][teams[i].name + " at " + teams[j].name]                  
+                        if result == teams[i].name:                            
+                            teams_beaten[i][j] += 1   
+                        teams_beaten[i][len(teams)] += 1
+                        teams_beaten[j][len(teams)] += 1
         teams_sweep = list()
         teams_swept = list()
         for i in range(0, len(teams)):
+            teams_beaten[i][i] = 1
             y = np.where(teams_beaten[i] == 0)[0]
             try:
                 z = y[0]
             except:
                 teams_sweep.append(teams[i])
-            if len(y) == len(teams) - 1 and len(teams) - 1 not in y:
+            teams_beaten[i][i] = 0
+            y = np.where(teams_beaten[i] == 0)[0]
+            if len(y) == len(teams) and len(teams) not in y:
                 teams_swept.append(teams[i])
 
         if len(teams_sweep) != 0:
