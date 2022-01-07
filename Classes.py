@@ -334,6 +334,7 @@ class Simulation_Team(Team):
         self.playoff_apps = 0
         self.division_wins = 0
         self.expected_wins = 0
+        self.top_seed = 0
     def set_location_variables(self, location):
         '''
         Method to re-initialize certain variables for a home or a road game.
