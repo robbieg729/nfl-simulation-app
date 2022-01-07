@@ -88,6 +88,8 @@ def simulate_season(teams, schedule, initial_records, start_week):
     for team in nfc_wild_card_teams:
         nfc_seeds[team.seed] = team 
         team.playoff_apps += 1
+    afc_seeds[1].top_seed += 1
+    nfc_seeds[1].top_seed += 1
     # List of seeds left in each conference
     afc_seeds_left = [1, 2, 3, 4, 5, 6, 7]
     nfc_seeds_left = [1, 2, 3, 4, 5, 6, 7]
@@ -143,7 +145,6 @@ def simulate_season(teams, schedule, initial_records, start_week):
         teams[team].division_position = 0
         teams[team].sov = 0
         teams[team].sos = 0
-    return [afc_seeds, nfc_seeds]
 
 def winning_percentage(record):
     '''
