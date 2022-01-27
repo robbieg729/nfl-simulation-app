@@ -63,6 +63,7 @@ The .ipynb files are intended to be used as well as viewed. Each of them perform
 6. [Simulate_Single_Week](#simulate_single_week)
 7. [Single_Game_Win_Probability_Chart_Maker](#single_game_win_probability_chart_maker)
 8. [Situational_Win_Probability_Calculator](#situational_win_probability_calculator)
+9. [Playoffs_Simulator](#playoffs_simulator)
 
 ### Distribution_Getter
 Distribution_Getter.ipynb calculates the best fit to a statistical distribution for every team's offensive and defensive rush and pass yards. These best fits are used in the simulate() function to generate random variables corresponding to a yardage gain on a single play. The best fits are written into Excel spreadsheets, so that they can be accessed by Simulate.py.
@@ -83,10 +84,13 @@ Simulate_Single_Season.ipynb simulates a single season of the NFL, including pla
 Simulate_Single_Week.ipynb simulates a full week of the NFL season, and outputs results of game simulations to Excel files, as well as calculating fantasy projections for players which are displayed via graphics and saved to the "Instagram Posts" sub-directory. User input can get a little tricky here and I am currently working on a better solution, but the variables that the user needs to specify before run-time are the schedule of the week, the week of the year being simulated, the number of times to simulate each game, and bets given by [FanDuel Sportsbook](https://sportsbook.fanduel.com/). Comments in the actual code explain this further.
 
 ### Single_Game_Win_Probability_Chart_Maker
-Single_Game_Win_Probability_Chart_Maker.ipynb simulates a game n times, from the beginning of every play in the game, saves the win probabilities at each time for one of the teams, and generates a line graph showing win probability against time. User input for this program is also a bit tricky, as there is no option to just specify a game from the season, because the program requires an Excel spreadsheet with the initial_variables (see simulate() function in Simulate.py) at the beginning of every play, which is difficult to generate for a game. The example given in the code currently is the Jaguars-Bengals game from Week 4, 2021, where the Bengals were down 14-0 at the half and almost down 21-0 just before the half. For now, the user can just run this program and see the kind of input it generates, though it can take a while for all the simulations to complete (the user can again specify the variable n to control the number of simulations at each play).
+Single_Game_Win_Probability_Chart_Maker.ipynb simulates a game n times, from the beginning of every play in the game, saves the win probabilities at each time for one of the teams, and generates a line graph showing win probability against time. User input for this program is also a bit tricky, as there is no option to just specify a game from the season, because the program requires an Excel spreadsheet with the initial_variables (see simulate() function in Simulate.py) at the beginning of every play, which is difficult to generate for a game. The example given in the code currently is the Chiefs-Bengals game from Week 17, 2021, where the Bengals were down 14-0, 21-7, and 28-14, but came back to win 34-31. For now, the user can just run this program and see the kind of input it generates, though it can take a while for all the simulations to complete (the user can again specify the variable n to control the number of simulations at each play).
 
 ### Situational_Win_Probability_Calculator
 Situational_Win_Probability_Calculator.ipynb allows evaluation of in-game decisions by Head Coaches, by calculating a teams win probability by attempting a certain play in a certain situation. For example, if a team was deciding whether or not to go for a touchdown on 4th and Goal at the 1 in a tied game late in the fourth quarter, the win probabilities for a run, pass, or field goal attempt could be calculated. The example that currently runs in the code is just that, involving Bengals Head Coach Zac Taylor's late decisions to go for it on 4th down against the Chiefs in Week 17 of the 2021 season. Currently working on a way to involve more user input.
+
+### Playoff_Simulator
+Playoff_Simulator.ipynb is a program which can simulate the playoffs once the regular season is finished. It is able to calculate results such as Super Bowl probabilities for each team, and most likely Super Bowl matchups, at a given point in the playoffs. Currently set to the beginning of the 2021 Conference Championship round.
 *** 
 
 ## Sub-directories
