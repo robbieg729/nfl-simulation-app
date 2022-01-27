@@ -89,8 +89,8 @@ Single_Game_Win_Probability_Chart_Maker.ipynb simulates a game n times, from the
 ### Situational_Win_Probability_Calculator
 Situational_Win_Probability_Calculator.ipynb allows evaluation of in-game decisions by Head Coaches, by calculating a teams win probability by attempting a certain play in a certain situation. For example, if a team was deciding whether or not to go for a touchdown on 4th and Goal at the 1 in a tied game late in the fourth quarter, the win probabilities for a run, pass, or field goal attempt could be calculated. The example that currently runs in the code is just that, involving Bengals Head Coach Zac Taylor's late decisions to go for it on 4th down against the Chiefs in Week 17 of the 2021 season. Currently working on a way to involve more user input.
 
-### Playoff_Simulator
-Playoff_Simulator.ipynb is a program which can simulate the playoffs once the regular season is finished. It is able to calculate results such as Super Bowl probabilities for each team, and most likely Super Bowl matchups, at a given point in the playoffs. Currently set to the beginning of the 2021 Conference Championship round.
+### Playoffs_Simulator
+Playoffs_Simulator.ipynb is a program which can simulate the playoffs once the regular season is finished. It is able to calculate results such as Super Bowl probabilities for each team, and most likely Super Bowl matchups, at a given point in the playoffs. Currently set to the beginning of the 2021 Conference Championship round.
 *** 
 
 ## Sub-directories
